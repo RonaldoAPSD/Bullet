@@ -56,7 +56,7 @@ namespace BE {
 			let colorPosition = this._shader.getUniformLocation("u_color");
 			gl.uniform4f(colorPosition, 1, 0.5, 0, 1);
 
-			this._sprite.draw();
+			this._sprite.render();
 
 			requestAnimationFrame(this.loop.bind(this));
 		}

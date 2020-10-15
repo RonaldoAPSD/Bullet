@@ -162,9 +162,9 @@ namespace BE {
 		}
 
 		/**
-		 * Draws this buffer.
+		 * Renders this buffer.
 		 */
-		public draw(): void {
+		public render(): void {
 			if(this._targetBufferType === gl.ARRAY_BUFFER) {
 				gl.drawArrays(this._mode, 0, this._data.length / this._elementSize);
 			} else if (this._targetBufferType === gl.ELEMENT_ARRAY_BUFFER) {

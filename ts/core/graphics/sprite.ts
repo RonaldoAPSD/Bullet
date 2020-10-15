@@ -49,9 +49,9 @@ namespace BE {
 
 		}
 		
-		public draw() {
+		public render() {
 			this._buffer.bind();
-			this._buffer.draw();
+			this._buffer.render();
 		}
 	}
 }
