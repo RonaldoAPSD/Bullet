@@ -7,6 +7,7 @@ namespace BE {
 			
 		declare private _canvas: HTMLCanvasElement;
 		declare private _shader: Shader;
+		declare private _projection: Matrix4x4;
 
 		declare private _sprite: Sprite;
 
@@ -28,10 +29,15 @@ namespace BE {
 			this.loadShaders();
 			this._shader.use();
 			
+			this._projection = Matrix4x4.orthographic(0, this._canvas.width, 0, this._canvas.height, -100.0, 100.0);
+			
 			// Load
 			this._sprite = new Sprite("test");
 
 			this._sprite.load();
+			//this._sprite.position.x = 200;
+			//this._sprite.position.y = 200;
+
 
 			this.resize();
 			this.loop();
@@ -45,7 +51,7 @@ namespace BE {
 				this._canvas.width = window.innerWidth;
 				this._canvas.height = window.innerHeight;
 
-				gl.viewport(0, 0, this._canvas.width, this._canvas.height);
+				gl.viewport(-1, 1, -1, 1);
 			}
 		}
 
@@ -56,8 +62,14 @@ namespace BE {
 			let colorPosition = this._shader.getUniformLocation("u_color");
 			gl.uniform4f(colorPosition, 1, 0.5, 0, 1);
 
-			this._sprite.render();
+			let projectionPosition = this._shader.getUniformLocation("u_projection");
+			gl.uniformMatrix4fv(projectionPosition, false, new Float32Array(this._projection.data));
 
+			let modelLocation = this._shader.getUniformLocation("u_model");
+			gl.uniformMatrix4fv(modelLocation, false, new Float32Array(Matrix4x4.translation(this._sprite.position).data));
+
+			// Render the sprite
+			this._sprite.render();
 			requestAnimationFrame(this.loop.bind(this));
 		}
 
@@ -65,8 +77,11 @@ namespace BE {
 			let vertexShaderSource = `
 				attribute vec3 a_position;
 
+				uniform mat4 u_projection;
+				uniform mat4 u_model;
+
 				void main() {
-					gl_Position = vec4(a_position, 1.0);
+					gl_Position = u_projection * u_model * vec4(a_position, 1.0);
 				}
 			`;
 
